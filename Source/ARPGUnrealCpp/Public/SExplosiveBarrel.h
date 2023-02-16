@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "SExplosiveBarrel.generated.h"
 
+class UStaticMeshComponent;
+class URadialForceComponent;
+
 UCLASS()
 class ARPGUNREALCPP_API ASExplosiveBarrel : public AActor
 {
@@ -16,11 +19,17 @@ public:
 	ASExplosiveBarrel();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere)
+		UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(VisibleAnywhere)
+		URadialForceComponent* ForceComp;
+
+	virtual void PostInitializeComponents() override;
+
+	//UFUNCTION binds event
+	UFUNCTION()
+		void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };
