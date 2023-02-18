@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class USAttributeComponent;
 
 
 UCLASS()
@@ -44,6 +45,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		USAttributeComponent* AttributeComp;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
