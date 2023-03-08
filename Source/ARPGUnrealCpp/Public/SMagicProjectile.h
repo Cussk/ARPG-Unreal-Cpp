@@ -3,42 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "SProjectileBase.h"
 #include "SMagicProjectile.generated.h"
-
-class USphereComponent;
-class UProjectileMovementComponent;
-class UParticleSystemComponent;
 
 
 UCLASS()
-class ARPGUNREALCPP_API ASMagicProjectile : public AActor
+class ARPGUNREALCPP_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ASMagicProjectile();
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		USphereComponent* SphereComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UProjectileMovementComponent* MovementComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		UParticleSystemComponent* EffectComp;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+		float DamageAmount;
 
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); //overloads found on OnComponentBeginOverlap definition "F12"
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+public:
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	ASMagicProjectile();
 
 };
