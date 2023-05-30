@@ -14,8 +14,14 @@ class ARPGUNREALCPP_API USAttributeComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static USAttributeComponent* GetAttrutes(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* FromActor);
+
 	USAttributeComponent();
 
 protected:
@@ -23,14 +29,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+		float HealthMax;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 
+	UFUNCTION(BlueprintCallable)
+		bool IsFullHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+		float GetHealthMax() const;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta); //delta is difference to apply to health
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta); //delta is difference to apply to health
 };

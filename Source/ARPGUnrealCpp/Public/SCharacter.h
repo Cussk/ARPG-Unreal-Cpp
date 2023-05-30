@@ -12,6 +12,7 @@ class UCameraComponent;
 class USInteractionComponent;
 class UAnimMontage;
 class USAttributeComponent;
+class UParticleSystem;
 
 
 UCLASS()
@@ -20,6 +21,23 @@ class ARPGUNREALCPP_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
+
+	// EditAnywhere - edit in BP editor and per-instance in level.
+	// VisibleAnywhere - 'read-only' in editor and level. (Use for Components)
+	// EditDefaultsOnly - hide variable per-instance, edit in BP editor only
+	// VisibleDefaultsOnly - 'read-only' access for variable, only in BP editor (uncommon)
+	// EditInstanceOnly - allow only editing of instance (eg. when placed in level)
+	// --
+	// BlueprintReadOnly - read-only in the Blueprint scripting (does not affect 'details'-panel)
+	// BlueprintReadWrite - read-write access in Blueprints
+	// --
+	// Category = "" - display only for detail panels and blueprint context menu.
+
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+		FName TimeToHitParamName;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+		FName HandSocketName;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 		TSubclassOf<AActor> ProjectileClass;
@@ -32,6 +50,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 		UAnimMontage* AttackAnim;
+	// Particle System played during attack animation 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+		UParticleSystem* CastingEffect;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_BlackholeAttack;
@@ -40,7 +61,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 		float AttackAnimDelay;
 	
-	UPROPERTY(VisibleAnywhere) //exposes property in editor
+	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp; //allows third person camera arm
 
 	UPROPERTY(VisibleAnywhere)
@@ -67,6 +88,8 @@ protected:
 	void Dash();
 
 	void Dash_TimeElapsed();
+
+	void StartAttackEffects();
 
 	// Re-use spawn logic between attacks
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);

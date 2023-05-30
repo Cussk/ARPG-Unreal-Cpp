@@ -7,6 +7,7 @@
 #include "SAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class USAttributeComponent;
 
 UCLASS()
 class ARPGUNREALCPP_API ASAICharacter : public ACharacter
@@ -18,10 +19,18 @@ public:
 
 protected:
 
+	void SetTargetActor(AActor* NewTarget);
+
 	virtual void PostInitializeComponents() override;
+
+	UFUNCTION()
+		void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	UPROPERTY(VisibleAnywhere, Category = "AI")
 	UPawnSensingComponent* PawnSensingComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		USAttributeComponent* AttributeComp;
 
 	UFUNCTION()
 		void OnPawnSeen(APawn* Pawn);

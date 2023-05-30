@@ -25,7 +25,7 @@ protected:
 	// Handle to cancel timer if we already hit something
 	FTimerHandle TimerHandle_DelayedDetonate;
 
-	// Base class using BlueprintNativeEvent, we must override the _Implementation not the Explode()
+	// Base class using BlueprintNativeEvent override the _Implementation not the Explode()
 	virtual void Explode_Implementation() override;
 
 	void TeleportInstigator();

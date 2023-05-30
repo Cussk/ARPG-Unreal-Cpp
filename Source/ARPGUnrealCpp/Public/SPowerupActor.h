@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGameplayInterface.h"
 #include "GameFramework/Actor.h"
 #include "SPowerupActor.generated.h"
 
+class USphereComponent;
+
 UCLASS()
-class ARPGUNREALCPP_API ASPowerupActor : public AActor
+class ARPGUNREALCPP_API ASPowerupActor : public AActor, public ISGameplayInterface
 {
 	GENERATED_BODY()
 

@@ -2,7 +2,7 @@
 
 
 #include "STargetDummy.h"
-
+#include "Components/StaticMeshComponent.h"
 #include "SAttributeComponent.h"
 
 // Sets default values
