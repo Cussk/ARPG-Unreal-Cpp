@@ -8,16 +8,20 @@
 
 class UPawnSensingComponent;
 class USAttributeComponent;
+class UUserWidget;
+class USWorldUserWidget;
 
 UCLASS()
 class ARPGUNREALCPP_API ASAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	ASAICharacter();
-
 protected:
+
+	USWorldUserWidget* ActiveHealthBar;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
@@ -37,5 +41,8 @@ protected:
 
 	UFUNCTION()
 		void OnPawnSeen(APawn* Pawn);
+
+public:
+	ASAICharacter();
 
 };

@@ -10,6 +10,12 @@ USAttributeComponent::USAttributeComponent()
 	Health = HealthMax;
 }
 
+bool USAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	//reduce health to 0 (Kill)
+	return ApplyHealthChange(InstigatorActor, -GetHealthMax());
+}
+
 bool USAttributeComponent::IsAlive() const
 {
 	return Health > 0.0f;
@@ -28,6 +34,12 @@ float USAttributeComponent::GetHealthMax() const
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
+	//does not apply damage if owner can be damaged is false
+	if(!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+
 	float OldHealth = Health;
 
 	//clamps health between 0 and max health

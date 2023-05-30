@@ -47,5 +47,9 @@ public:
 	ASGameModeBase();
 
 	virtual void StartPlay() override;
+
+	//console command
+	UFUNCTION(Exec)
+	void KillAll();
 	
 };

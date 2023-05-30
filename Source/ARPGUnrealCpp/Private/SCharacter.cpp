@@ -67,6 +67,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
+//console command
+void ASCharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributeComp->ApplyHealthChange(this, Amount);
+}
+
 void ASCharacter::MoveForward(float Value)
 {
 	FRotator ControlRotation = GetControlRotation(); // gets the rotation of camera view

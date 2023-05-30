@@ -6,7 +6,9 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "SAttributeComponent.h"
+#include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Perception/PawnSensingComponent.h"
 
 // Sets default values
@@ -45,6 +47,22 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			SetTargetActor(InstigatorActor);
 		}
 
+		//if no health bar, create one
+		if (ActiveHealthBar == nullptr)
+		{
+			//creates healthbar widget
+			ActiveHealthBar = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
+			if (ActiveHealthBar) //check nullptr
+			{
+				//attach to this instance of AICharacter
+				ActiveHealthBar->AttachedActor = this;
+
+				//add healthbar to screen
+				ActiveHealthBar->AddToViewport();
+			}
+		}
+
+		//call hit flash
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
 		if (NewHealth <= 0)

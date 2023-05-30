@@ -23,6 +23,19 @@ void ASGameModeBase::StartPlay()
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
 
+//kill all active bots
+void ASGameModeBase::KillAll()
+{
+	for (ASAICharacter* Bot : TActorRange<ASAICharacter>(GetWorld()))
+	{
+		USAttributeComponent* AIAttributeComp = USAttributeComponent::GetAttrutes(Bot);
+		if (ensure(AIAttributeComp) && AIAttributeComp->IsAlive())
+		{
+			AIAttributeComp->Kill(this); // @fixme: pass in player? for kill credit
+		}
+	}
+}
+
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
 	//iterates through the Bot actors in world and increases count of alive Bots
