@@ -2,6 +2,8 @@
 
 
 #include "SCharacter.h"
+
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -26,13 +28,13 @@ ASCharacter::ASCharacter()
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
 
-	AttackAnimDelay = 0.2f;
 	TimeToHitParamName = "TimeToHit";
-	HandSocketName = "Muzzle_01";
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -59,6 +61,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("Turn", this, &ASCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::SprintStop);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 
@@ -102,94 +107,30 @@ void ASCharacter::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-void ASCharacter::PrimaryAttack()
+void ASCharacter::SprintStart()
 {
-	StartAttackEffects();
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
+	ActionComp->StartActionByName(this, "Sprint");
 }
 
-void ASCharacter::PrimaryAttack_TimeElapsed()
+void ASCharacter::SprintStop()
 {
-	SpawnProjectile(ProjectileClass);
+	ActionComp->StopActionByName(this, "Sprint");
+}
+
+void ASCharacter::PrimaryAttack()
+{
+	ActionComp->StartActionByName(this, "PrimaryAttack");
 }
 
 
 void ASCharacter::BlackHoleAttack()
 {
-	StartAttackEffects();
-
-	GetWorldTimerManager().SetTimer(TimerHandle_BlackholeAttack, this, &ASCharacter::BlackholeAttack_TimeElapsed, AttackAnimDelay);
+	ActionComp->StartActionByName(this, "SecondaryAttack");
 }
-
-
-void ASCharacter::BlackholeAttack_TimeElapsed()
-{
-	SpawnProjectile(BlackHoleProjectileClass);
-}
-
 
 void ASCharacter::Dash()
 {
-	StartAttackEffects();
-
-	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ASCharacter::Dash_TimeElapsed, AttackAnimDelay);
-}
-
-
-void ASCharacter::Dash_TimeElapsed()
-{
-	SpawnProjectile(DashProjectileClass);
-}
-
-void ASCharacter::StartAttackEffects()
-{
-	PlayAnimMontage(AttackAnim);
-
-	UGameplayStatics::SpawnEmitterAttached(CastingEffect, GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
-}
-
-void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
-{
-	if (ensureAlways(ClassToSpawn)) //assert, breaks to this point if null
-	{
-		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
-
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParams.Instigator = this;
-
-		FCollisionShape Shape;
-		Shape.SetSphere(20.0f);
-
-		// Ignore Player
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
-
-		FCollisionObjectQueryParams ObjParams;
-		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
-		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
-
-		FVector TraceStart = CameraComp->GetComponentLocation();
-		// endpoint far into the look-at distance (not too far, still adjust somewhat towards crosshair on a miss)
-		FVector TraceEnd = CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 5000);
-
-		FHitResult Hit;
-
-		// true if we got to a blocking hit (Alternative: SweepSingleByChannel with ECC_WorldDynamic)
-		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
-		{
-			// Overwrite trace end with impact point in world
-			TraceEnd = Hit.ImpactPoint;
-		}
-
-		// find new direction/rotation from Hand pointing to impact point in world.
-		FRotator ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
-
-		FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
-		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
-	}
+	ActionComp->StartActionByName(this, "Dash");
 }
 
 void ASCharacter::PrimaryInteract()
