@@ -26,6 +26,11 @@ bool USAttributeComponent::IsFullHealth() const
 	return Health == HealthMax;
 }
 
+float USAttributeComponent::GetHealth()
+{
+	return Health;
+}
+
 
 float USAttributeComponent::GetHealthMax() const
 {
@@ -52,7 +57,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 }
 
 //gets attribute component of designated actor
-USAttributeComponent* USAttributeComponent::GetAttrutes(AActor* FromActor)
+USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
 {
 	if (FromActor) //check nullptr
 	{
@@ -64,7 +69,7 @@ USAttributeComponent* USAttributeComponent::GetAttrutes(AActor* FromActor)
 
 bool USAttributeComponent::IsActorAlive(AActor* FromActor)
 {
-	USAttributeComponent* AttributeComponent = GetAttrutes(FromActor);
+	USAttributeComponent* AttributeComponent = GetAttributes(FromActor);
 	if (AttributeComponent) //check nullptr
 	{
 		return AttributeComponent->IsAlive();

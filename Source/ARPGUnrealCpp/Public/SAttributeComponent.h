@@ -17,7 +17,7 @@ class ARPGUNREALCPP_API USAttributeComponent : public UActorComponent
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	static USAttributeComponent* GetAttrutes(AActor* FromActor);
+	static USAttributeComponent* GetAttributes(AActor* FromActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
 	static bool IsActorAlive(AActor* FromActor);
@@ -42,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		bool IsFullHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	float GetHealth();
 
 	UFUNCTION(BlueprintCallable)
 		float GetHealthMax() const;

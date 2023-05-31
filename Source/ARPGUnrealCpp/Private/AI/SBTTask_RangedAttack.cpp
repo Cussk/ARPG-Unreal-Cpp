@@ -25,9 +25,6 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 			return EBTNodeResult::Failed;
 		}
 
-		//get socket for projectile spawn location 
-		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("Muzzle_01");
-
 		//cast to target actor
 		AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 		//if no target actor return failed
@@ -42,12 +39,15 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 			return EBTNodeResult::Failed;
 		}
 
+		//get socket for projectile spawn location 
+		FVector MuzzleLocation = MyPawn->GetMesh()->GetSocketLocation("Muzzle_01");
+
 		//get direction for projectile spawn
 		FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
 		//set rotation of muzzle to Direction
 		FRotator MuzzleRotation = Direction.Rotation();
 
-		//random aim offset up/down
+		//random aim offset up, to not hit floor
 		MuzzleRotation.Pitch += FMath::RandRange(0.0f, MaxBulletSpread);
 		//random aim offset left/right
 		MuzzleRotation.Yaw += FMath::RandRange(-MaxBulletSpread, MaxBulletSpread);

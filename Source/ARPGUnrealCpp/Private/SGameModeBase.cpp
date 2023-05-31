@@ -28,7 +28,7 @@ void ASGameModeBase::KillAll()
 {
 	for (ASAICharacter* Bot : TActorRange<ASAICharacter>(GetWorld()))
 	{
-		USAttributeComponent* AIAttributeComp = USAttributeComponent::GetAttrutes(Bot);
+		USAttributeComponent* AIAttributeComp = USAttributeComponent::GetAttributes(Bot);
 		if (ensure(AIAttributeComp) && AIAttributeComp->IsAlive())
 		{
 			AIAttributeComp->Kill(this); // @fixme: pass in player? for kill credit
@@ -42,7 +42,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	int32 NumOfAliveBots = 0;
 	for (ASAICharacter* Bot : TActorRange<ASAICharacter>(GetWorld()))
 	{
-		USAttributeComponent* AIAttributeComp = USAttributeComponent::GetAttrutes(Bot);
+		USAttributeComponent* AIAttributeComp = USAttributeComponent::GetAttributes(Bot);
 		if (ensure(AIAttributeComp) && AIAttributeComp->IsAlive())
 		{
 			++NumOfAliveBots;

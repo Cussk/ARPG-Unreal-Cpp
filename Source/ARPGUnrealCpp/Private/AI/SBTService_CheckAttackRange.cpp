@@ -7,6 +7,10 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 
+USBTService_CheckAttackRange::USBTService_CheckAttackRange()
+{
+	MaxAttackRange = 2000.0f;
+}
 
 void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
                                             float DeltaSeconds)
@@ -28,11 +32,10 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				APawn* AIPawn = MyController->GetPawn();
 				if (ensure(AIPawn)) //check null ptr
 				{
-					float MaxDistance = 2000.0f;
 
 					float DistanceTo = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
 
-					bool bWithinRange = DistanceTo < MaxDistance;
+					bool bWithinRange = DistanceTo < MaxAttackRange;
 
 					//can see target
 					bool bHasLOS = false;
