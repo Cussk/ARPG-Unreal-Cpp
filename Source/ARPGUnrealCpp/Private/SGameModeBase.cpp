@@ -5,9 +5,12 @@
 
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 
+//toggles spawning of bots from console
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("s.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 ASGameModeBase::ASGameModeBase()
 {
@@ -38,6 +41,14 @@ void ASGameModeBase::KillAll()
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
+	//if false return, don't spawn any bots
+	if (!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar 'CVarSpawnBots'."));
+		return;
+	}
+
+
 	//iterates through the Bot actors in world and increases count of alive Bots
 	int32 NumOfAliveBots = 0;
 	for (ASAICharacter* Bot : TActorRange<ASAICharacter>(GetWorld()))
@@ -98,5 +109,36 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 			DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
 		}
 	}
+}
+
+void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller)) //check nul
+	{
+		//detach player controller from pawn
+		Controller->UnPossess();
+
+		RestartPlayer(Controller);
+	}
+}
+
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* KillerActor)
+{
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if (Player)
+	{
+		//local variable, so timer won't be reset if another player dies in multiplayer
+		FTimerHandle TimerHandle_RespawnDelay;
+
+		//function to call when requested
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+
+		float RespawnDelay = 2.0f;
+		//calls delegate function when timer runs out 
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(KillerActor));
 }
 

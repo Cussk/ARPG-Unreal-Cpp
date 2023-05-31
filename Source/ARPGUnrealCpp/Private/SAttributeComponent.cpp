@@ -3,6 +3,11 @@
 
 #include "SAttributeComponent.h"
 
+#include "SGameModeBase.h"
+
+//console sommand multiply damage by float
+static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("s.DamageMultiplier"), 1.0f, TEXT("Global Damage Modifier for Attribute Component."), ECVF_Cheat);
+
 USAttributeComponent::USAttributeComponent()
 {
 	Health = 100;
@@ -40,9 +45,17 @@ float USAttributeComponent::GetHealthMax() const
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	//does not apply damage if owner can be damaged is false
-	if(!GetOwner()->CanBeDamaged())
+	if(!GetOwner()->CanBeDamaged() && Delta < 0.0f)
 	{
 		return false;
+	}
+
+	//if doing damage apply damage multiplier from console
+	if (Delta < 0.0f)
+	{
+		float DamageMultiplier = CVarDamageMultiplier.GetValueOnGameThread();
+
+		Delta *= DamageMultiplier;
 	}
 
 	float OldHealth = Health;
@@ -52,6 +65,16 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 
 	float ActualDelta = Health - OldHealth;
 	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta); //triggers event
+
+	//Died
+	if (ActualDelta < 0.0f && Health == 0.0f)
+	{
+		ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+		if (GameMode) // check null
+		{
+			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+		}
+	}
 
 	return ActualDelta != 0;
 }
