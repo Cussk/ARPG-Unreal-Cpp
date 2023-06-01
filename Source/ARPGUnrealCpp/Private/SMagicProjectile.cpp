@@ -2,9 +2,12 @@
 
 
 #include "SMagicProjectile.h"
+
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 
 // Sets default values
@@ -30,6 +33,18 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			// Only explode when we hit something valid
 			Explode();
 		}*/
+
+		USActionComponent* ActionComponent = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+		if (ActionComponent && ActionComponent->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			//reverse direction of projectile
+			MoveComp->Velocity = -MoveComp->Velocity;
+
+			//changes instigator to parrying actor, so projectile will hit the shooter
+			SetInstigator(Cast<APawn>(OtherActor));
+
+			return;
+		}
 
 		// Apply Damage & Impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
