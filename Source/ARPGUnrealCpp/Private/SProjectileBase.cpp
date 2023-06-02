@@ -33,6 +33,9 @@ ASProjectileBase::ASProjectileBase()
 	ImpactShakeInnerRadius = 250.0f;
 	ImpactShakeOuterRadius = 2500.0f;
 
+	//sets class to replicate for multiplayer
+	bReplicates = true;
+
 }
 
 

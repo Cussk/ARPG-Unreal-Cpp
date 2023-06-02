@@ -28,7 +28,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		USizeBox* ParentSizeBox;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	UPROPERTY(BlueprintReadWrite, Category = "UI", meta = (ExposeOnSpawn=true))
 	AActor* AttachedActor;
 	
 };
