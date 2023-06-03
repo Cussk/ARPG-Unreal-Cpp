@@ -15,6 +15,9 @@ USAttributeComponent::USAttributeComponent()
 	HealthMax = 100;
 	Health = HealthMax;
 
+	Rage = 0;
+	RageMax = 100;
+
 	//sets class to replicate for multiplayer
 	SetIsReplicatedByDefault(true);
 }
@@ -85,6 +88,29 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		{
 			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
 		}
+	}
+
+	return ActualDelta != 0;
+}
+
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+
+bool USAttributeComponent::ApplyRage(AActor* InstigatorActor, float Delta)
+{
+	float OldRage = Rage;
+
+	//clamp rage value between 0 and rage max
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+
+	float ActualDelta = Rage - OldRage;
+	if (ActualDelta != 0.0f)
+	{
+		//trigger event call
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
 	}
 
 	return ActualDelta != 0;

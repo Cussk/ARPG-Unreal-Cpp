@@ -148,9 +148,13 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	if (Delta < 0.0f)
 	{
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
+
+		// Rage added equal to damage received (Abs to turn into positive rage number)
+		float RageDelta = FMath::Abs(Delta);
+		AttributeComp->ApplyRage(InstigatorActor, RageDelta);
 	}
 
-	//char health lees equal 0 and was damaged not healed
+	//char health lees equal 0 and was damaged not healed, died
 	if(NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		//cast to player controller, disable input
