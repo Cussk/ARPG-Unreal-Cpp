@@ -30,7 +30,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 		FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(ReplicatedUsing = "OnRep_IsRunning")
 	bool bIsRunning;
+
+	UFUNCTION()
+	void OnRep_IsRunning();
+
 public:
 
 	// Start immediately when added to an action component 
@@ -54,4 +59,10 @@ public:
 		FName ActionName;
 
 	UWorld* GetWorld() const override;
+
+	//override UObject networking status
+	bool IsSupportedForNetworking() const override
+	{
+		return true;
+	}
 };
