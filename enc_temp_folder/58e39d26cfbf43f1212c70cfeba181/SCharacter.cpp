@@ -160,7 +160,5 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		//cast to player controller, disable input
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
-
-		SetLifeSpan(5.0f);
 	}
 }

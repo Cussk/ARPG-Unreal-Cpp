@@ -38,7 +38,7 @@ bool USAttributeComponent::IsFullHealth() const
 	return Health == HealthMax;
 }
 
-float USAttributeComponent::GetHealth()
+float USAttributeComponent::GetHealth() const
 {
 	return Health;
 }
@@ -66,27 +66,33 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 
 	float OldHealth = Health;
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 
-	//clamps health between 0 and max health
-	Health = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
+	float ActualDelta = NewHealth - OldHealth;
 
-	float ActualDelta = Health - OldHealth;
-	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta); //triggers event
-
-	//only call event if health actually changes
-	if (ActualDelta != 0.0f)
+	//Is server?, can update health
+	if (GetOwner()->HasAuthority())
 	{
-		//triggers OnHealthChanged event if on server replicates to all clients, if called on client only triggers on client
-		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
-	}
+		//clamps health between 0 and max health
+		Health = NewHealth;
 
-	//Died
-	if (ActualDelta < 0.0f && Health == 0.0f)
-	{
-		ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		if (GameMode) // check null
+		//only call event if health actually changes
+		if (ActualDelta != 0.0f)
 		{
-			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+			//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta); //triggers event
+
+			//triggers OnHealthChanged event if on server replicates to all clients, if called on client only triggers on client
+			MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+		}
+
+		//Died
+		if (ActualDelta < 0.0f && Health == 0.0f)
+		{
+			ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GameMode) // check null
+			{
+				GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
 
