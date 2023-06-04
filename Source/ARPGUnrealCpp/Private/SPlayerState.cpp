@@ -3,10 +3,12 @@
 
 #include "SPlayerState.h"
 
+#include "SSaveGame.h"
+
 void ASPlayerState::AddCredits(int32 Delta)
 {
-	// Avoid user-error of adding a negative amount or zero
-	if (!ensure(Delta > 0.0f))
+	// Avoid user-error of adding a negative amount
+	if (!ensure(Delta >= 0.0f))
 	{
 		return;
 	}
@@ -23,8 +25,8 @@ int32 ASPlayerState::GetCredits() const
 
 bool ASPlayerState::RemoveCredits(int32 Delta)
 {
-	// Avoid user-error of adding a subtracting negative amount or zero
-	if (!ensure(Delta > 0.0f))
+	// Avoid user-error of adding a subtracting negative amount
+	if (!ensure(Delta >= 0.0f))
 	{
 		return false;
 	}
@@ -40,4 +42,22 @@ bool ASPlayerState::RemoveCredits(int32 Delta)
 	OnCreditsChanged.Broadcast(this, Credits, -Delta);
 
 	return true;
+}
+
+/*SAVING*/
+
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject) //check null
+	{
+		SaveObject->Credits = Credits;
+	}
+}
+
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject) //check null
+	{
+		Credits = SaveObject->Credits;
+	}
 }
