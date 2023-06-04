@@ -128,18 +128,25 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 	if (GetTargetActor() != Pawn)
 	{
 		SetTargetActor(Pawn);
-		
-		USWorldUserWidget* NewWidget = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
-		if (NewWidget)
-		{
-			NewWidget->AttachedActor = this;
-			// Index of 10 (or anything higher than default of 0) places this on top of any other widget.
-			// May end up behind the minion health bar if not set.
-			NewWidget->AddToViewport(10);
-		}
+
+		//call for server and other clients
+		MulticastPawnSeen();
 	}
 
 	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+}
+
+//sent to client automatically
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	USWorldUserWidget* NewWidget = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+	if (NewWidget)
+	{
+		NewWidget->AttachedActor = this;
+		// Index of 10 (or anything higher than default of 0) places this on top of any other widget.
+		// May end up behind the minion health bar if not set.
+		NewWidget->AddToViewport(10);
+	}
 }
 
 

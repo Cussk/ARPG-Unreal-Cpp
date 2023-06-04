@@ -4,6 +4,7 @@
 #include "SPlayerState.h"
 
 #include "SSaveGame.h"
+#include "Net/UnrealNetwork.h"
 
 void ASPlayerState::AddCredits(int32 Delta)
 {
@@ -44,6 +45,25 @@ bool ASPlayerState::RemoveCredits(int32 Delta)
 	return true;
 }
 
+void ASPlayerState::OnRep_Credits(int32 OldCredits)
+{
+
+	OnCreditsChanged.Broadcast(this, Credits, Credits - OldCredits);
+}
+
+
+// void ASPlayerState::MulticastCredits_Implementation(float NewCredits, float Delta)
+// {
+// 	OnCreditsChanged.Broadcast(this, NewCredits, Delta);
+// }
+
+void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPlayerState, Credits);
+}
+
 /*SAVING*/
 
 void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
@@ -58,6 +78,8 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
 {
 	if (SaveObject) //check null
 	{
-		Credits = SaveObject->Credits;
+		//Credits = SaveObject->Credits;
+		// Makes sure to trigger credits changed event
+		AddCredits(SaveObject->Credits);
 	}
 }

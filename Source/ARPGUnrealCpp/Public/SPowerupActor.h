@@ -17,6 +17,12 @@ class ARPGUNREALCPP_API ASPowerupActor : public AActor, public ISGameplayInterfa
 
 protected:
 
+	UPROPERTY(ReplicatedUsing = "OnRep_IsActive") //rep notify
+		bool bIsActive;
+
+	UFUNCTION()
+		void OnRep_IsActive();
+
 	UPROPERTY(EditAnywhere, Category = "Powerup")
 		float RespawnTime;
 

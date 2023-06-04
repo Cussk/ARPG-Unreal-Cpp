@@ -65,7 +65,7 @@ void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* N
 	// Calling Before Super:: so we set variables before 'beginplayingstate' is called in PlayerController (which is where we instantiate UI)
 	//load player state information
 	ASPlayerState* PlayerState = NewPlayer->GetPlayerState<ASPlayerState>();
-	if (PlayerState)
+	if (ensure(PlayerState))
 	{
 		PlayerState->LoadPlayerState(CurrentSaveGame);
 	}
@@ -250,8 +250,10 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* KillerActor)
 
 	// Give Credits for kill
 	APawn* KillerPawn = Cast<APawn>(KillerActor);
-	if (KillerPawn)
+	// Don't credit kills of self
+	if (KillerPawn && KillerPawn != VictimActor)
 	{
+		// Only Players will have a 'PlayerState' instance, bots have nullptr
 		ASPlayerState* PlayerState = KillerPawn->GetPlayerState<ASPlayerState>();
 		if (PlayerState) 
 		{
