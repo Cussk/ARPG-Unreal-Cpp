@@ -24,7 +24,6 @@ void ASPlayerController::TogglePauseMenu()
 	PauseMenuInstance = CreateWidget<UUserWidget>(this, PauseMenuClass);
 	if (PauseMenuInstance)
 	{
-
 		//high z-order to put menu to front of screen
 		PauseMenuInstance->AddToViewport(100);
 
