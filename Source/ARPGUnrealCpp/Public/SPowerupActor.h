@@ -43,6 +43,8 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
+	FText GetInteractText_Implementation(APawn* InstigatorPawn);
+
 public:
 
 	ASPowerupActor();
