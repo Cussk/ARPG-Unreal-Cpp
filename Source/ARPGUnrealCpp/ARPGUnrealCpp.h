@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_STATS_GROUP(TEXT("CUSS_Game"), STATGROUP_CUSS, STATCAT_Advanced);
+
 
 //log to determine if client of server
 static void LogOnScreen(UObject* WorldContext, FString Msg, FColor Color = FColor::White, float Duration = 5.0f)
