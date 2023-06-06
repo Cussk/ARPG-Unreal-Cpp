@@ -1,17 +1,66 @@
 # ARPG-Unreal-Cpp
  Action RPG with Unreal and C++
+
+Part of the Professional Game Development in C++ and Unreal Engine Course 
+
+Project Includes:
+
+-Third-person Action Character Movement
+
+-Action System (similar to Gameplay Ability System in design)
+
+-Dash Ability (Teleporting via projectile)
+
+-Blackhole Ability
+
+-Magic Projectile Attack
+
+-"Thorns" buff (reflecting damage)
+
+-Burning Damage-over-time effect
+
+-AttributeComponent (Holding health etc.)
+
+-SaveGame System for persisting progress of character and world state.
+
+-Heavy use of Events to drive UI and gameplay reactions.
+
+-Mix of C++ & Blueprint and how to combine these effectively.
+
+-GameplayTags to mark-up Actors, Buffs, Actions.
+
+-Multiplayer support for all features
+
+-GameMode Logic
+
+-Asset Manager: Async loading of data assets
+
+-Async loading of UI icons
+
+-Powerup pickups to heal, gain credits/actions. UMG
+
+-Main menu to host/join game
+
+-UI elements for player attributes and projected widgets for powerups and enemy health.
+
+-C++ Localized Text
+
+AI
+
+-Minion AI with Behavior Trees (Roam, See, Chase, Attack, Flee/Heal)
+
+-C++ Custom Behavior Trees Nodes
+
+-EQS for attack/cover locations by AI Powerups
+
+-EQS for binding bot/powerup spawn locations.
+
+-Bot spawning system (bots cost points to spawn, gamemode gains points over time to spend)
+
+-DataTable holds bot information
+
+-DataAssets to hold enemy configurations
+
  
- Major Features
-
--Building C++ Game Framework
--Combining C++ and Blueprint for flexible game logic
--Unreal’s Gameplay Systems
--Event-based Programming Principles
--AI Programming (Behavior Trees, Blackboard, EQS, Custom C++ Nodes)
--Multiplayer Networking (Replication architecture, low-bandwidth, best practices)
--Saving Game State to Disk (Saving/loading player progression and world state)
--Performance Profiling Tools (Unreal Insights & in-editor tools)
--User Interfaces with UMG (using Event-based Principles)
--Async Asset Loading & Soft References
-
- Game Assets: Licensed for use with the Unreal Engine only. Without a custom license you cannot use to create sequels, remasters, or otherwise emulate the original game or use the original game’s trademarks, character names, or other IP to advertise or name your game. (Unreal Engine EULA applies) (Please note this applies to the Game Assets that refer to Epic's Paragon, you can still use the project code and content to build your own Unreal Engine game)
+ 
+Game Assets: Licensed for use with the Unreal Engine only. Without a custom license you cannot use to create sequels, remasters, or otherwise emulate the original game or use the original game’s trademarks, character names, or other IP to advertise or name your game. (Unreal Engine EULA applies) (Please note this applies to the Game Assets that refer to Epic's Paragon, you can still use the project code and content to build your own Unreal Engine game)
