@@ -35,8 +35,9 @@ class ARPGUNREALCPP_API USAction : public UObject
 
 protected:
 
+	//soft reference
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-		UTexture2D* Icon;
+		TSoftObjectPtr<UTexture2D> Icon;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
 		USActionComponent* GetOwningComponent() const;

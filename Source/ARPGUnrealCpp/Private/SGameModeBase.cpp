@@ -4,12 +4,17 @@
 #include "SGameModeBase.h"
 
 #include "EngineUtils.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "SMonsterData.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "ARPGUnrealCpp/ARPGUnrealCpp.h"
+#include "Engine/AssetManager.h"
+#include "Engine/StreamableManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/SaveGame.h"
@@ -150,10 +155,60 @@ void ASGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	{
 		if (Locations.IsValidIndex(0))
 		{
-			GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+			if (MonsterTable) //check null
+			{
+				TArray<FMonsterInfoRow*> Rows;
+				MonsterTable->GetAllRows("", Rows);
+
+				// Get Random Enemy
+				int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+				FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+				//asset manager to load monsters async
+				UAssetManager* Manager = UAssetManager::GetIfValid();
+				if (Manager)
+				{
+					LogOnScreen(this, "Loading monster...", FColor::Green);
+
+					TArray<FName> Bundles;
+					FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
+					Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles, Delegate);
+				}
+			}
 
 			// Track all the used spawn locations
 			DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
+		}
+	}
+}
+
+//spawn monster and grant any actions specified in data table
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	LogOnScreen(this, "Finished loading.", FColor::Green);
+
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if (Manager)
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		if (MonsterData) //check null
+		{
+			//spawn monster from selected row in data table
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(MonsterData)));
+
+				// Grant special actions, buffs etc.
+				USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if (ActionComp)
+				{
+					for (TSubclassOf<USAction> ActionClass : MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
 		}
 	}
 }
