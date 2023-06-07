@@ -1,5 +1,5 @@
 # ARPG-Unreal-Cpp
- Action RPG with Unreal and C++
+![Screenshot (51)](https://github.com/Cussk/ARPG-Unreal-Cpp/assets/108804713/6410b904-ecf5-4c11-b233-f4241bd99d70)
 
 Part of the Professional Game Development in C++ and Unreal Engine Course 
 
