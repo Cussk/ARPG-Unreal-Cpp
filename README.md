@@ -55,7 +55,7 @@ AI
 
 -EQS for binding bot/powerup spawn locations.
 
--Bot spawning system (bots cost points to spawn, gamemode gains points over time to spend)
+-Bot spawning system 
 
 -DataTable holds bot information
 
